@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>adoraads.ai — The AI Beauty Ad Network</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --obsidian:  #0d0b0e;
+  --midnight:  #13101a;
+  --ink:       #1e1824;
+  --card:      #181420;
+  --rose-gold: #c9956a;
+  --blush:     #e8b89a;
+  --champagne: #f2dfc8;
+  --pearl:     #faf6f1;
+  --mist:      rgba(255,255,255,.08);
+  --mauve:     #9b7b8a;
+  --white:     #ffffff;
+  --serif:     'Cormorant Garamond', Georgia, serif;
+  --sans:      'Outfit', sans-serif;
+  --mono:      'DM Mono', monospace;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--obsidian);
+  color: var(--pearl);
+  font-family: var(--sans);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Grain overlay ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: .03; pointer-events: none;
+}
+
+/* ── Nav ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 20px 48px;
+  display: flex; align-items: center; gap: 0;
+  background: linear-gradient(180deg, rgba(13,11,14,.95) 0%, transparent 100%);
+  backdrop-filter: blur(2px);
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-wordmark {
+  font-family: var(--serif); font-size: 22px; font-weight: 400;
+  color: var(--pearl); letter-spacing: .04em;
+}
+.nav-wordmark span { color: var(--rose-gold); font-weight: 300; }
+.nav-domain {
+  font-family: var(--mono); font-size: 10px; color: var(--mauve);
+  letter-spacing: .1em;
+}
+.nav-links { margin-left: auto; display: flex; align-items: center; gap: 32px; }
+.nav-link {
+  font-size: 12px; font-weight: 400; letter-spacing: .06em;
+  color: var(--mauve); text-decoration: none; text-transform: uppercase;
+  transition: color .2s;
+}
+.nav-link:hover { color: var(--pearl); }
+.nav-cta {
+  font-family: var(--sans); font-size: 12px; font-weight: 500;
+  color: var(--obsidian); background: var(--rose-gold);
+  padding: 10px 22px; border-radius: 24px; border: none;
+  cursor: pointer; letter-spacing: .04em;
+  text-decoration: none; transition: all .2s;
+}
+.nav-cta:hover { background: var(--blush); transform: translateY(-1px); }
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  position: relative;
+}
+
+/* Radial glow behind hero text */
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 30%; left: 50%; transform: translate(-50%, -50%);
+  width: 700px; height: 500px;
+  background: radial-gradient(ellipse, rgba(201,149,106,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  font-family: var(--mono); font-size: 10px; font-weight: 400;
+  letter-spacing: .22em; text-transform: uppercase;
+  color: var(--rose-gold); margin-bottom: 24px;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; display: inline-block;
+  width: 28px; height: 1px; background: var(--rose-gold); opacity: .5;
+}
+
+.hero-headline {
+  font-family: var(--serif);
+  font-size: clamp(48px, 8vw, 88px);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -.01em;
+  color: var(--pearl);
+  margin-bottom: 12px;
+  max-width: 900px;
+}
+.hero-headline em {
+  font-style: italic; color: var(--rose-gold);
+}
+.hero-headline .line2 {
+  display: block;
+  background: linear-gradient(90deg, var(--champagne), var(--rose-gold), var(--blush));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-family: var(--sans); font-size: 16px; font-weight: 300;
+  color: var(--mauve); max-width: 540px; line-height: 1.7;
+  margin: 24px auto 40px; letter-spacing: .01em;
+}
+.hero-sub strong { color: var(--champagne); font-weight: 400; }
+
+.hero-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.btn-primary {
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  background: var(--rose-gold); color: var(--obsidian);
+  padding: 14px 32px; border-radius: 32px; border: none;
+  cursor: pointer; letter-spacing: .04em; text-decoration: none;
+  transition: all .25s; display: inline-block;
+  box-shadow: 0 0 40px rgba(201,149,106,.25);
+}
+.btn-primary:hover { background: var(--blush); transform: translateY(-2px); box-shadow: 0 8px 48px rgba(201,149,106,.35); }
+.btn-ghost {
+  font-family: var(--sans); font-size: 13px; font-weight: 400;
+  color: var(--mauve); padding: 14px 24px;
+  border: 1px solid rgba(255,255,255,.1); border-radius: 32px;
+  cursor: pointer; letter-spacing: .04em; text-decoration: none;
+  transition: all .2s; display: inline-block;
+}
+.btn-ghost:hover { color: var(--pearl); border-color: rgba(255,255,255,.25); }
+
+/* Ticker / social proof */
+.hero-ticker {
+  margin-top: 64px;
+  display: flex; align-items: center; gap: 32px;
+  justify-content: center; flex-wrap: wrap;
+}
+.ticker-item {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--mauve);
+}
+.ticker-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--rose-gold); }
+
+/* ── Chat demo mockup ── */
+.demo-section {
+  padding: 80px 24px;
+  max-width: 860px; margin: 0 auto;
+  position: relative;
+}
+.demo-label {
+  text-align: center;
+  font-family: var(--mono); font-size: 10px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--mauve); margin-bottom: 40px;
+}
+
+.chat-demo {
+  background: var(--midnight);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 40px 120px rgba(0,0,0,.6), 0 0 0 1px rgba(201,149,106,.08);
+}
+.chat-topbar {
+  padding: 14px 20px;
+  background: rgba(255,255,255,.03);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  display: flex; align-items: center; gap: 8px;
+}
+.chat-dot { width: 10px; height: 10px; border-radius: 50%; }
+.chat-name {
+  margin-left: 8px; font-family: var(--sans); font-size: 12px;
+  color: rgba(255,255,255,.3); letter-spacing: .06em;
+}
+.chat-body { padding: 28px 28px 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.user-msg {
+  align-self: flex-end;
+  background: rgba(201,149,106,.15);
+  border: 1px solid rgba(201,149,106,.2);
+  border-radius: 18px 18px 4px 18px;
+  padding: 11px 18px;
+  font-size: 14px; color: var(--champagne); max-width: 70%;
+}
+
+.ai-msg { display: flex; gap: 12px; max-width: 92%; }
+.ai-avatar {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, #c9956a, #9b7b8a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; margin-top: 2px;
+}
+.ai-content { flex: 1; }
+.ai-text { font-size: 13px; color: rgba(255,255,255,.6); line-height: 1.65; margin-bottom: 14px; }
+
+/* Sponsored mini card inside chat */
+.sponsored-mini {
+  background: rgba(201,149,106,.06);
+  border: 1px solid rgba(201,149,106,.2);
+  border-radius: 12px; overflow: hidden;
+}
+.sp-mini-bar {
+  padding: 7px 12px;
+  background: rgba(201,149,106,.08);
+  border-bottom: 1px solid rgba(201,149,106,.15);
+  display: flex; align-items: center; gap: 8px;
+}
+.sp-mini-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--rose-gold);
+  background: rgba(201,149,106,.12); border: 1px solid rgba(201,149,106,.3);
+  border-radius: 3px; padding: 2px 6px;
+}
+.sp-mini-label { font-size: 11px; color: rgba(201,149,106,.6); }
+.sp-mini-products { display: flex; gap: 8px; padding: 12px; }
+.sp-mini-product {
+  flex: 1; background: rgba(255,255,255,.04); border-radius: 8px; padding: 10px;
+  border: 1px solid rgba(255,255,255,.06);
+}
+.sp-mini-brand { font-size: 10px; color: var(--mauve); margin-bottom: 2px; }
+.sp-mini-name  { font-size: 11px; color: var(--pearl); font-weight: 500; margin-bottom: 4px; line-height: 1.3; }
+.sp-mini-price { font-family: var(--mono); font-size: 11px; color: var(--rose-gold); }
+.sp-mini-btn {
+  margin-top: 6px; width: 100%; padding: 5px;
+  background: var(--rose-gold); color: var(--obsidian);
+  border: none; border-radius: 5px; font-size: 10px;
+  font-weight: 500; cursor: pointer; font-family: var(--sans);
+}
+
+/* ── How it works ── */
+.how-section {
+  padding: 100px 24px;
+  max-width: 1100px; margin: 0 auto;
+}
+.section-eyebrow {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--rose-gold);
+  text-align: center; margin-bottom: 16px;
+}
+.section-heading {
+  font-family: var(--serif); font-size: clamp(32px, 5vw, 52px); font-weight: 300;
+  color: var(--pearl); text-align: center; letter-spacing: .01em;
+  line-height: 1.15; margin-bottom: 56px;
+}
+.section-heading em { font-style: italic; color: var(--rose-gold); }
+
+.steps-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+.step-card {
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 16px; padding: 28px 22px;
+  position: relative; overflow: hidden;
+  transition: border-color .25s, transform .25s;
+}
+.step-card:hover { border-color: rgba(201,149,106,.3); transform: translateY(-4px); }
+.step-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--rose-gold), transparent);
+  opacity: 0; transition: opacity .25s;
+}
+.step-card:hover::before { opacity: 1; }
+.step-num {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .14em;
+  color: var(--rose-gold); text-transform: uppercase; margin-bottom: 14px;
+}
+.step-icon { font-size: 26px; margin-bottom: 12px; }
+.step-title {
+  font-family: var(--serif); font-size: 18px; font-weight: 500;
+  color: var(--pearl); margin-bottom: 8px; line-height: 1.3;
+}
+.step-desc { font-size: 12px; color: var(--mauve); line-height: 1.7; }
+
+/* ── Stats bar ── */
+.stats-bar {
+  background: var(--midnight);
+  border-top: 1px solid rgba(255,255,255,.06);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  padding: 56px 24px;
+}
+.stats-inner { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; }
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: var(--serif); font-size: 44px; font-weight: 300;
+  color: var(--pearl); letter-spacing: -.01em; line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-num span { color: var(--rose-gold); }
+.stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; color: var(--mauve); text-transform: uppercase; }
+
+/* ── Pricing ── */
+.pricing-section {
+  padding: 100px 24px;
+  max-width: 1000px; margin: 0 auto;
+}
+.pricing-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+.price-card {
+  background: var(--card); border: 1px solid rgba(255,255,255,.07);
+  border-radius: 20px; padding: 36px 28px; position: relative; overflow: hidden;
+}
+.price-card.featured {
+  background: linear-gradient(160deg, #1e1824, #2a1a30);
+  border-color: rgba(201,149,106,.3);
+  box-shadow: 0 0 0 1px rgba(201,149,106,.15), 0 40px 80px rgba(0,0,0,.4);
+}
+.price-card.featured::before {
+  content: 'Most Popular';
+  position: absolute; top: 16px; right: 16px;
+  font-family: var(--mono); font-size: 9px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--obsidian);
+  background: var(--rose-gold); border-radius: 12px; padding: 3px 10px;
+}
+.price-tier { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--mauve); margin-bottom: 16px; }
+.price-amount { font-family: var(--serif); font-size: 48px; font-weight: 300; color: var(--pearl); line-height: 1; margin-bottom: 4px; }
+.price-amount span { font-size: 18px; color: var(--mauve); font-weight: 300; }
+.price-period { font-size: 12px; color: var(--mauve); margin-bottom: 6px; }
+.price-revshare { font-family: var(--mono); font-size: 11px; color: var(--rose-gold); margin-bottom: 24px; }
+.price-divider { height: 1px; background: rgba(255,255,255,.07); margin-bottom: 20px; }
+.price-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.price-feature { display: flex; align-items: flex-start; gap: 10px; font-size: 12px; color: rgba(255,255,255,.6); line-height: 1.5; }
+.price-check { color: var(--rose-gold); flex-shrink: 0; font-size: 11px; margin-top: 2px; }
+.price-btn {
+  width: 100%; padding: 13px;
+  border-radius: 28px; border: none; cursor: pointer;
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  letter-spacing: .04em; transition: all .2s;
+}
+.price-btn.primary { background: var(--rose-gold); color: var(--obsidian); }
+.price-btn.primary:hover { background: var(--blush); transform: translateY(-1px); }
+.price-btn.ghost { background: transparent; color: var(--mauve); border: 1px solid rgba(255,255,255,.1); }
+.price-btn.ghost:hover { color: var(--pearl); border-color: rgba(255,255,255,.25); }
+
+/* ── Brands / social proof ── */
+.brands-section {
+  padding: 60px 24px;
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+.brands-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--mauve); margin-bottom: 32px;
+}
+.brands-row { display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
+.brand-name {
+  font-family: var(--serif); font-size: 18px; font-weight: 400;
+  color: rgba(255,255,255,.2); letter-spacing: .06em;
+  transition: color .2s;
+}
+.brand-name:hover { color: rgba(255,255,255,.5); }
+
+/* ── CTA section ── */
+.cta-section {
+  padding: 120px 24px;
+  text-align: center; position: relative; overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(201,149,106,.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-headline {
+  font-family: var(--serif); font-size: clamp(36px, 6vw, 64px);
+  font-weight: 300; color: var(--pearl); line-height: 1.1;
+  margin-bottom: 20px; letter-spacing: .01em;
+}
+.cta-headline em { font-style: italic; color: var(--rose-gold); }
+.cta-sub {
+  font-size: 15px; color: var(--mauve); max-width: 440px;
+  margin: 0 auto 40px; line-height: 1.7;
+}
+.cta-form { display: flex; gap: 10px; max-width: 420px; margin: 0 auto; }
+.cta-input {
+  flex: 1; background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 28px; padding: 14px 20px;
+  font-family: var(--sans); font-size: 13px;
+  color: var(--pearl); outline: none; transition: border-color .2s;
+}
+.cta-input::placeholder { color: var(--mauve); }
+.cta-input:focus { border-color: rgba(201,149,106,.4); }
+.cta-submit {
+  background: var(--rose-gold); color: var(--obsidian);
+  border: none; border-radius: 28px; padding: 14px 24px;
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  cursor: pointer; white-space: nowrap; transition: all .2s;
+}
+.cta-submit:hover { background: var(--blush); }
+
+/* ── Footer ── */
+footer {
+  padding: 40px 48px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.footer-logo {
+  font-family: var(--serif); font-size: 18px; font-weight: 400;
+  color: var(--pearl);
+}
+.footer-logo span { color: var(--rose-gold); font-weight: 300; }
+.footer-links { display: flex; gap: 24px; }
+.footer-link {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--mauve); text-decoration: none;
+  transition: color .2s;
+}
+.footer-link:hover { color: var(--pearl); }
+.footer-copy { font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,.2); }
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes glow {
+  0%, 100% { opacity: .6; }
+  50%       { opacity: 1; }
+}
+.hero-eyebrow  { animation: fadeUp .6s ease .1s both; }
+.hero-headline { animation: fadeUp .7s ease .25s both; }
+.hero-sub      { animation: fadeUp .7s ease .4s both; }
+.hero-actions  { animation: fadeUp .7s ease .55s both; }
+.hero-ticker   { animation: fadeUp .7s ease .7s both; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  nav { padding: 16px 20px; }
+  .nav-links { display: none; }
+  .steps-grid { grid-template-columns: 1fr 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .stats-inner { grid-template-columns: 1fr 1fr; }
+  .sp-mini-products { flex-direction: column; }
+  footer { flex-direction: column; gap: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <rect x="1" y="7" width="18" height="18" rx="2.5" transform="rotate(45 10 14)" fill="#c9956a" opacity=".2"/>
+      <rect x="4" y="10" width="12" height="12" rx="2" transform="rotate(45 10 14)" fill="none" stroke="#c9956a" stroke-width="1.2"/>
+      <circle cx="10" cy="14" r="3.5" fill="#c9956a"/>
+      <circle cx="10" cy="14" r="1.4" fill="#0d0b0e"/>
+    </svg>
+    <span class="nav-wordmark">adora<span>ads</span></span>
+    <span class="nav-domain">.ai</span>
+  </a>
+  <div class="nav-links">
+    <a href="#how" class="nav-link">How it works</a>
+    <a href="#pricing" class="nav-link">Pricing</a>
+    <a href="#" class="nav-link">Docs</a>
+    <a href="#waitlist" class="nav-cta">Request access</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-eyebrow">The AI Beauty Ad Network</div>
+  <h1 class="hero-headline">
+    Your brand, inside<br>
+    <em>every beauty conversation.</em>
+    <span class="line2">Powered by MCP.</span>
+  </h1>
+  <p class="hero-sub">
+    When shoppers ask <strong>ChatGPT, Claude, or Gemini</strong> for beauty recommendations, <strong>adoraads.ai</strong> puts your sponsored products inside the answer — with full disclosure, real-time bidding, and closed-loop attribution.
+  </p>
+  <div class="hero-actions">
+    <a href="#waitlist" class="btn-primary">Get early access</a>
+    <a href="#how" class="btn-ghost">See how it works ↓</a>
+  </div>
+  <div class="hero-ticker">
+    <div class="ticker-item"><div class="ticker-dot"></div>MCP-native protocol</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Real-time RTB auctions</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>IAB-compliant disclosure</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Closed-loop ROAS</div>
+  </div>
+</section>
+
+<!-- Chat demo -->
+<section class="demo-section">
+  <div class="demo-label">Live demo &mdash; what a shopper sees inside an LLM</div>
+  <div class="chat-demo">
+    <div class="chat-topbar">
+      <div class="chat-dot" style="background:#ff5f57;"></div>
+      <div class="chat-dot" style="background:#febc2e;"></div>
+      <div class="chat-dot" style="background:#28c840;"></div>
+      <span class="chat-name">ChatGPT &nbsp;·&nbsp; Shopping agent &nbsp;·&nbsp; adoraads.ai connected</span>
+    </div>
+    <div class="chat-body">
+      <div class="user-msg">I want to purchase a red lipstick</div>
+      <div class="ai-msg">
+        <div class="ai-avatar">✦</div>
+        <div class="ai-content">
+          <div class="ai-text">Great choice! Here are top red lipstick picks. I&rsquo;ve included sponsored featured brands with detailed product info, plus where to buy at the best price across major retailers.</div>
+          <div class="sponsored-mini">
+            <div class="sp-mini-bar">
+              <span class="sp-mini-tag">Sponsored</span>
+              <span class="sp-mini-label">Featured beauty brands &middot; adoraads.ai</span>
+            </div>
+            <div class="sp-mini-products">
+              <div class="sp-mini-product">
+                <div class="sp-mini-brand">M&middot;A&middot;C</div>
+                <div class="sp-mini-name">Macximal Silky Matte &ldquo;Russian Red&rdquo;</div>
+                <div class="sp-mini-price">$17.50 <span style="text-decoration:line-through;color:#9b7b8a;font-size:9px;">$25</span></div>
+                <button class="sp-mini-btn">Shop Now</button>
+              </div>
+              <div class="sp-mini-product">
+                <div class="sp-mini-brand">Charlotte Tilbury</div>
+                <div class="sp-mini-name">Matte Revolution &ldquo;Red Carpet Red&rdquo;</div>
+                <div class="sp-mini-price">$37.00</div>
+                <button class="sp-mini-btn">Shop Now</button>
+              </div>
+              <div class="sp-mini-product">
+                <div class="sp-mini-brand">Fenty Beauty</div>
+                <div class="sp-mini-name">Icon Velvet Liquid &ldquo;The MVP&rdquo;</div>
+                <div class="sp-mini-price">$26.00</div>
+                <button class="sp-mini-btn">Shop Now</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="how-section" id="how">
+  <div class="section-eyebrow">How it works</div>
+  <h2 class="section-heading">The ad lives inside<br><em>the answer</em></h2>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">Step 01</div>
+      <div class="step-icon">&#128172;</div>
+      <div class="step-title">Shopper asks an LLM</div>
+      <div class="step-desc">&ldquo;What&rsquo;s the best serum for oily skin?&rdquo; &mdash; the query enters ChatGPT, Claude, or any MCP-compatible agent.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Step 02</div>
+      <div class="step-icon">&#9889;</div>
+      <div class="step-title">adoraads.ai auctions in &lt;100ms</div>
+      <div class="step-desc">Our MCP server receives the query, runs a real-time beauty auction using skin type, concern, and ingredient targeting.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Step 03</div>
+      <div class="step-icon">&#10024;</div>
+      <div class="step-title">Winning brand appears in the answer</div>
+      <div class="step-desc">Sponsored product — clearly labeled — is injected into the LLM&rsquo;s response with brand story, price, and retailer comparison.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Step 04</div>
+      <div class="step-icon">&#128200;</div>
+      <div class="step-title">Brand pays per outcome</div>
+      <div class="step-desc">CPM for inclusion &rarr; CPR when recommended &rarr; CPA when purchased. Full funnel. Full attribution. No wasted spend.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <div class="stat-num">68<span>%</span></div>
+      <div class="stat-label">of beauty queries<br>now start in AI</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">&lt;100<span>ms</span></div>
+      <div class="stat-label">Auction latency</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">4.8<span>×</span></div>
+      <div class="stat-label">Average ROAS<br>in beta</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">5<span>+</span></div>
+      <div class="stat-label">LLM platforms<br>supported</div>
+    </div>
+  </div>
+</div>
+
+<!-- Brands -->
+<div class="brands-section">
+  <div class="brands-label">Launching with beauty brands including</div>
+  <div class="brands-row">
+    <span class="brand-name">MAC Cosmetics</span>
+    <span class="brand-name">The Ordinary</span>
+    <span class="brand-name">Charlotte Tilbury</span>
+    <span class="brand-name">COSRX</span>
+    <span class="brand-name">Fenty Beauty</span>
+    <span class="brand-name">Tatcha</span>
+  </div>
+</div>
+
+<!-- Pricing -->
+<section class="pricing-section" id="pricing">
+  <div class="section-eyebrow">Pricing</div>
+  <h2 class="section-heading">Simple, <em>performance-first</em><br>SaaS pricing</h2>
+  <div class="pricing-grid">
+
+    <div class="price-card">
+      <div class="price-tier">Starter</div>
+      <div class="price-amount">$499<span>/mo</span></div>
+      <div class="price-period">+ 15% revenue share on ad spend</div>
+      <div class="price-revshare">sponsored_search tool only</div>
+      <div class="price-divider"></div>
+      <div class="price-features">
+        <div class="price-feature"><span class="price-check">&#9670;</span>10,000 auctions / month</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>Category + budget targeting</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>Basic ROAS dashboard</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>CPM + CPR + CPA billing</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>IAB disclosure enforcement</div>
+      </div>
+      <button class="price-btn ghost">Get started</button>
+    </div>
+
+    <div class="price-card featured">
+      <div class="price-tier">Growth</div>
+      <div class="price-amount">$1,999<span>/mo</span></div>
+      <div class="price-period">+ 12% revenue share on ad spend</div>
+      <div class="price-revshare">All 4 MCP tools unlocked</div>
+      <div class="price-divider"></div>
+      <div class="price-features">
+        <div class="price-feature"><span class="price-check">&#9670;</span>100,000 auctions / month</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>Skin type + concern targeting</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>Routine builder + skin match</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>Brand spotlight format</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>Full funnel attribution</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>Dedicated success manager</div>
+      </div>
+      <button class="price-btn primary">Start free trial</button>
+    </div>
+
+    <div class="price-card">
+      <div class="price-tier">Enterprise</div>
+      <div class="price-amount" style="font-size:36px;">Custom</div>
+      <div class="price-period">Volume pricing available</div>
+      <div class="price-revshare">Private MCP server + white-label</div>
+      <div class="price-divider"></div>
+      <div class="price-features">
+        <div class="price-feature"><span class="price-check">&#9670;</span>Unlimited auctions</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>Custom AI skin model</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>Private MCP endpoint</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>White-label dashboard</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>SLA + dedicated infra</div>
+        <div class="price-feature"><span class="price-check">&#9670;</span>Custom reporting API</div>
+      </div>
+      <button class="price-btn ghost">Talk to us</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA / Waitlist -->
+<section class="cta-section" id="waitlist">
+  <h2 class="cta-headline">Be first.<br><em>Adore the future.</em></h2>
+  <p class="cta-sub">Join the waitlist and get 3 months free on any plan when we launch. Limited to 50 founding brands.</p>
+  <div class="cta-form">
+    <input class="cta-input" type="email" placeholder="your@brand.com" />
+    <button class="cta-submit">Join waitlist</button>
+  </div>
+  <p style="font-family:var(--mono);font-size:10px;color:var(--mauve);margin-top:16px;letter-spacing:.08em;">
+    No spam. Unsubscribe anytime. adoraads.ai &mdash; launching 2025.
+  </p>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">adora<span>ads</span><span style="font-family:var(--mono);font-size:12px;color:var(--mauve);font-weight:300;">.ai</span></div>
+  <div class="footer-links">
+    <a href="#" class="footer-link">Privacy</a>
+    <a href="#" class="footer-link">Terms</a>
+    <a href="#" class="footer-link">Docs</a>
+    <a href="#" class="footer-link">Blog</a>
+    <a href="#" class="footer-link">hello@adoraads.ai</a>
+  </div>
+  <div class="footer-copy">&copy; 2025 adoraads.ai &middot; Beauty LLM Ad Network</div>
+</footer>
+
+</body>
+</html>
