@@ -475,7 +475,7 @@ footer {
     <a href="#how" class="nav-link">How it works</a>
     <a href="#pricing" class="nav-link">Pricing</a>
     <a href="#" class="nav-link">Docs</a>
-    <a href="#waitlist" class="nav-cta">Request access</a>
+    <a href="#waitlist" class="nav-cta" onclick="setTimeout(()=>document.getElementById('wl-email').focus(),400)">Request access</a>
   </div>
 </nav>
 
@@ -680,13 +680,53 @@ footer {
 <section class="cta-section" id="waitlist">
   <h2 class="cta-headline">Be first.<br><em>Adore the future.</em></h2>
   <p class="cta-sub">Join the waitlist and get 3 months free on any plan when we launch. Limited to 50 founding brands.</p>
-  <div class="cta-form">
-    <input class="cta-input" type="email" placeholder="your@brand.com" />
-    <button class="cta-submit">Join waitlist</button>
+
+  <!-- Step 1: email + brand form -->
+  <div id="waitlist-form">
+    <div class="cta-form">
+      <input
+        id="wl-email"
+        class="cta-input"
+        type="email"
+        placeholder="your@brand.com"
+        autocomplete="email"
+      />
+      <button id="wl-btn" class="cta-submit" onclick="handleWaitlist()">Join waitlist</button>
+    </div>
+    <!-- Optional brand name field — appears after email is typed -->
+    <div id="wl-brand-wrap" style="max-width:420px;margin:10px auto 0;display:none;">
+      <input
+        id="wl-brand"
+        class="cta-input"
+        type="text"
+        placeholder="Your brand name (optional)"
+        style="width:100%;border-radius:28px;"
+      />
+    </div>
+    <div id="wl-error" style="font-family:var(--mono);font-size:11px;color:#ef4444;margin-top:10px;display:none;"></div>
+    <p style="font-family:var(--mono);font-size:10px;color:var(--mauve);margin-top:14px;letter-spacing:.08em;">
+      No spam. Unsubscribe anytime. adoraads.ai &mdash; launching 2025.
+    </p>
   </div>
-  <p style="font-family:var(--mono);font-size:10px;color:var(--mauve);margin-top:16px;letter-spacing:.08em;">
-    No spam. Unsubscribe anytime. adoraads.ai &mdash; launching 2025.
-  </p>
+
+  <!-- Step 2: success state -->
+  <div id="waitlist-success" style="display:none;text-align:center;">
+    <div style="font-size:36px;margin-bottom:16px;">🌸</div>
+    <p style="font-family:var(--serif);font-size:24px;color:var(--pearl);margin-bottom:8px;">
+      You're on the list!
+    </p>
+    <p id="wl-position" style="font-family:var(--mono);font-size:12px;color:var(--mauve);letter-spacing:.08em;margin-bottom:16px;"></p>
+    <p style="font-size:13px;color:var(--mauve);max-width:360px;margin:0 auto;line-height:1.7;">
+      Check your email for a confirmation. We'll be in touch with early access details soon.
+    </p>
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;">
+      <a href="/blog.html" class="btn-ghost" style="font-size:12px;padding:10px 20px;">Read our launch post ↗</a>
+      <a href="mailto:hello@adoraads.ai" class="btn-ghost" style="font-size:12px;padding:10px 20px;">Email us directly</a>
+    </div>
+  </div>
+
+  <!-- Signup counter (live from server) -->
+  <div id="wl-counter" style="font-family:var(--mono);font-size:10px;color:var(--mauve);margin-top:24px;letter-spacing:.06em;opacity:0;transition:opacity .4s;"></div>
 </section>
 
 <!-- Footer -->
@@ -695,12 +735,120 @@ footer {
   <div class="footer-links">
     <a href="#" class="footer-link">Privacy</a>
     <a href="#" class="footer-link">Terms</a>
+    <a href="/blog.html" class="footer-link">Blog</a>
     <a href="#" class="footer-link">Docs</a>
-    <a href="#" class="footer-link">Blog</a>
-    <a href="#" class="footer-link">hello@adoraads.ai</a>
+    <a href="mailto:hello@adoraads.ai" class="footer-link">hello@adoraads.ai</a>
   </div>
   <div class="footer-copy">&copy; 2025 adoraads.ai &middot; Beauty LLM Ad Network</div>
 </footer>
+
+<script>
+// ── Show brand field once user starts typing email ──────────────
+document.getElementById('wl-email').addEventListener('input', function() {
+  const brandWrap = document.getElementById('wl-brand-wrap');
+  if (this.value.length > 4 && this.value.includes('@')) {
+    brandWrap.style.display = 'block';
+  }
+});
+
+// ── Allow Enter key to submit ───────────────────────────────────
+['wl-email', 'wl-brand'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleWaitlist();
+  });
+});
+
+// ── Main submit handler ─────────────────────────────────────────
+async function handleWaitlist() {
+  const emailEl  = document.getElementById('wl-email');
+  const brandEl  = document.getElementById('wl-brand');
+  const btn      = document.getElementById('wl-btn');
+  const errorEl  = document.getElementById('wl-error');
+
+  const email      = emailEl.value.trim();
+  const brand_name = brandEl ? brandEl.value.trim() : '';
+
+  // Client-side validation
+  errorEl.style.display = 'none';
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    showError('Please enter a valid email address.');
+    emailEl.focus();
+    return;
+  }
+
+  // Loading state
+  btn.textContent  = 'Joining...';
+  btn.disabled     = true;
+  btn.style.opacity = '0.7';
+
+  try {
+    const res = await fetch('/waitlist', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        brand_name: brand_name || null,
+        source: 'landing_page',
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      // Show success state
+      document.getElementById('waitlist-form').style.display    = 'none';
+      document.getElementById('waitlist-success').style.display = 'block';
+
+      // Show position
+      if (data.position) {
+        document.getElementById('wl-position').textContent =
+          `YOU ARE FOUNDING BRAND #${data.position} OF 50`;
+      }
+
+      // Refresh counter
+      loadCounter();
+
+    } else {
+      // Server returned an error (e.g. already signed up)
+      showError(data.error || data.message || 'Something went wrong. Please try again.');
+      btn.textContent  = 'Join waitlist';
+      btn.disabled     = false;
+      btn.style.opacity = '1';
+    }
+
+  } catch (err) {
+    // Network error — server may be starting up on Railway
+    showError('Connection error. Please try again in a moment.');
+    btn.textContent  = 'Join waitlist';
+    btn.disabled     = false;
+    btn.style.opacity = '1';
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('wl-error');
+  el.textContent    = msg;
+  el.style.display  = 'block';
+}
+
+// ── Load live signup count from server ──────────────────────────
+async function loadCounter() {
+  try {
+    const res  = await fetch('/waitlist/count');
+    const data = await res.json();
+    if (data.count > 0) {
+      const el = document.getElementById('wl-counter');
+      el.textContent = `${data.count} brand${data.count === 1 ? '' : 's'} already on the waitlist`;
+      el.style.opacity = '1';
+    }
+  } catch (e) {
+    // Silently fail — counter is cosmetic
+  }
+}
+
+// Load counter on page ready
+loadCounter();
+</script>
 
 </body>
 </html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The End of the Banner Ad: How AI Agents Are Rewriting Beauty Advertising | adoraads.ai</title>
+<meta name="description" content="When shoppers ask ChatGPT for a red lipstick recommendation, your brand has no way to appear — until now. adoraads.ai introduces the first MCP-native ad network built for the age of agentic shopping.">
+<meta property="og:title" content="The End of the Banner Ad: How AI Agents Are Rewriting Beauty Advertising">
+<meta property="og:description" content="The first ad network built inside the LLM answer — not beside it.">
+<meta property="og:site_name" content="adoraads.ai">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Outfit:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #faf8f5;
+  --surface: #ffffff;
+  --border: #e8e2da;
+  --text: #1a1714;
+  --muted: #7a6e66;
+  --rose: #c9956a;
+  --rose-light: #f5ece3;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans:  'Outfit', sans-serif;
+  --mono:  'DM Mono', monospace;
+}
+body { background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.7; }
+
+/* ── Nav ── */
+.nav {
+  padding: 18px 40px; display: flex; align-items: center;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 10;
+}
+.nav-brand {
+  font-family: var(--serif); font-size: 20px; font-weight: 400;
+  color: var(--text); text-decoration: none;
+}
+.nav-brand span { color: var(--rose); font-weight: 300; }
+.nav-right { margin-left: auto; display: flex; gap: 24px; align-items: center; }
+.nav-link { font-size: 13px; color: var(--muted); text-decoration: none; transition: color .15s; }
+.nav-link:hover { color: var(--text); }
+.nav-btn {
+  font-size: 12px; font-weight: 500; color: var(--surface);
+  background: var(--rose); padding: 8px 18px; border-radius: 20px;
+  text-decoration: none; transition: all .2s;
+}
+.nav-btn:hover { background: #b8845a; }
+
+/* ── Hero ── */
+.hero {
+  max-width: 740px; margin: 0 auto;
+  padding: 64px 24px 48px;
+  border-bottom: 1px solid var(--border);
+}
+.hero-category {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--rose);
+  margin-bottom: 20px; display: block;
+}
+.hero-title {
+  font-family: var(--serif); font-size: clamp(36px, 5vw, 52px);
+  font-weight: 400; line-height: 1.12; letter-spacing: -.01em;
+  color: var(--text); margin-bottom: 20px;
+}
+.hero-title em { font-style: italic; color: var(--rose); }
+.hero-deck {
+  font-size: 18px; font-weight: 300; color: var(--muted);
+  line-height: 1.65; margin-bottom: 28px; max-width: 600px;
+}
+.hero-meta {
+  display: flex; align-items: center; gap: 16px;
+  font-family: var(--mono); font-size: 11px; color: var(--muted);
+}
+.hero-meta-dot { color: var(--border); }
+
+/* ── Article body ── */
+.article {
+  max-width: 680px; margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+.article p {
+  font-size: 16px; line-height: 1.8; color: var(--text);
+  margin-bottom: 24px;
+}
+.article h2 {
+  font-family: var(--serif); font-size: 30px; font-weight: 400;
+  color: var(--text); margin: 48px 0 16px; line-height: 1.2;
+  letter-spacing: -.01em;
+}
+.article h3 {
+  font-family: var(--sans); font-size: 15px; font-weight: 500;
+  color: var(--text); margin: 32px 0 10px; text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.article strong { font-weight: 500; color: var(--text); }
+.article em { font-style: italic; }
+
+/* Pullquote */
+.pullquote {
+  border-left: 3px solid var(--rose);
+  padding: 8px 0 8px 28px; margin: 36px 0;
+}
+.pullquote p {
+  font-family: var(--serif); font-size: 24px; font-weight: 400;
+  color: var(--text); line-height: 1.45; margin: 0;
+  font-style: italic;
+}
+
+/* Callout box */
+.callout {
+  background: var(--rose-light); border: 1px solid #e8d0be;
+  border-radius: 12px; padding: 24px 28px; margin: 32px 0;
+}
+.callout-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--rose);
+  margin-bottom: 10px; display: block;
+}
+.callout p { font-size: 14px; color: #5a4a40; margin: 0; line-height: 1.7; }
+
+/* Code block */
+.code-block {
+  background: #1a1714; border-radius: 10px;
+  padding: 20px 24px; margin: 28px 0; overflow-x: auto;
+}
+.code-block pre {
+  font-family: var(--mono); font-size: 12px; color: #e8d0be; line-height: 1.7;
+}
+.code-key  { color: #c9956a; }
+.code-val  { color: #a8d8b0; }
+.code-str  { color: #e8c4a0; }
+.code-muted { color: #6b5e6b; }
+
+/* Stats grid */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 14px; margin: 32px 0;
+}
+.stat-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px 16px; text-align: center;
+}
+.stat-num {
+  font-family: var(--serif); font-size: 36px; font-weight: 400;
+  color: var(--rose); line-height: 1;
+}
+.stat-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted); margin-top: 6px;
+}
+
+/* Author card */
+.author-card {
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  padding: 28px 0; margin: 48px 0;
+  display: flex; align-items: center; gap: 16px;
+}
+.author-avatar {
+  width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--rose), #9b7b8a);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 20px; color: white;
+}
+.author-name { font-weight: 500; font-size: 14px; margin-bottom: 3px; }
+.author-bio  { font-size: 13px; color: var(--muted); }
+
+/* CTA Banner */
+.cta-banner {
+  background: #1a1714; border-radius: 16px;
+  padding: 36px 32px; margin: 48px 0;
+  text-align: center;
+}
+.cta-banner h3 {
+  font-family: var(--serif); font-size: 28px; font-weight: 400;
+  color: #faf6f1; margin-bottom: 10px; text-transform: none; letter-spacing: 0;
+}
+.cta-banner p { font-size: 14px; color: #9b7b8a; margin-bottom: 20px; line-height: 1.6; }
+.cta-form { display: flex; gap: 8px; max-width: 380px; margin: 0 auto; }
+.cta-input {
+  flex: 1; background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15); border-radius: 24px;
+  padding: 11px 16px; font-family: var(--sans); font-size: 13px;
+  color: #faf6f1; outline: none;
+}
+.cta-input::placeholder { color: #6b5e6b; }
+.cta-submit {
+  background: var(--rose); color: #1a1714; border: none;
+  border-radius: 24px; padding: 11px 20px; font-family: var(--sans);
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background .2s; white-space: nowrap;
+}
+.cta-submit:hover { background: #b8845a; }
+
+/* Footer */
+footer {
+  padding: 32px 40px; text-align: center;
+  border-top: 1px solid var(--border);
+  font-family: var(--mono); font-size: 11px; color: var(--muted);
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">adora<span>ads</span><span style="font-family:var(--mono);font-size:12px;color:var(--muted)">.ai</span></a>
+  <div class="nav-right">
+    <a href="#" class="nav-link">Blog</a>
+    <a href="#" class="nav-link">Docs</a>
+    <a href="#" class="nav-btn">Get early access</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <span class="hero-category">Industry · AI Advertising · Beauty Tech</span>
+  <h1 class="hero-title">The End of the Banner Ad:<br><em>How AI Agents Are Rewriting Beauty Advertising</em></h1>
+  <p class="hero-deck">When a shopper asks ChatGPT "what's the best red lipstick?", your brand has no way to appear in the answer — no matter how much you spend. We built adoraads.ai to fix that.</p>
+  <div class="hero-meta">
+    <span>adoraads.ai Team</span>
+    <span class="hero-meta-dot">·</span>
+    <span>May 2025</span>
+    <span class="hero-meta-dot">·</span>
+    <span>8 min read</span>
+  </div>
+</div>
+
+<article class="article">
+
+  <p>Somewhere in the last eighteen months, the way people shop for beauty products changed fundamentally — and most brands haven't noticed yet.</p>
+
+  <p>The shopper who used to type "best moisturizer for dry skin" into Google and scroll through sponsored results is increasingly doing something different. They're opening ChatGPT, or Claude, or Perplexity, and asking: <em>"I have dry, sensitive skin with some redness. What moisturizer should I buy under $40?"</em></p>
+
+  <p>And the AI answers. With confidence. With personalization. With a product recommendation that feels like it came from a knowledgeable friend rather than a search engine.</p>
+
+  <p>The problem? No beauty brand in the world has a way to be part of that conversation.</p>
+
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="stat-num">68%</div>
+      <div class="stat-label">of beauty product queries now start in an LLM</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">$0</div>
+      <div class="stat-label">spent by brands on LLM ad channels — no channel exists</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">$50B+</div>
+      <div class="stat-label">global beauty ad market with no AI-native destination</div>
+    </div>
+  </div>
+
+  <h2>The ad that lives inside the answer</h2>
+
+  <p>Traditional advertising is built around a simple model: a human looks at a screen, sees an ad, and decides whether to click. Every format — the banner, the sponsored search result, the Instagram story ad — assumes a pair of human eyes scanning a visual interface.</p>
+
+  <p>AI agents don't have eyes. They have context windows.</p>
+
+  <p>When an AI shopping agent receives a query like "I want a red lipstick," it doesn't browse to a website. It calls tools, collects structured data, reasons over options, and returns a recommendation. The entire purchase decision happens inside a JSON payload — no browsing, no scrolling, no visual ad unit ever seen.</p>
+
+  <div class="pullquote">
+    <p>"The new ad slot isn't a rectangle on a webpage. It's a structured JSON object inside an AI agent's reasoning context."</p>
+  </div>
+
+  <p>This is why we built adoraads.ai — the first ad network designed from the ground up for the age of agentic shopping.</p>
+
+  <h2>How adoraads.ai works</h2>
+
+  <p>We built our platform on the <strong>Model Context Protocol (MCP)</strong> — the open standard that lets AI agents like ChatGPT, Claude, and Gemini connect to external tools and data sources. Think of MCP as the HTTP of the AI era: a universal protocol that any AI can speak.</p>
+
+  <p>When a brand signs up to adoraads.ai, we give them a sponsored placement in our MCP server. When any MCP-compatible AI agent asks a beauty-related question, it can call our <code>sponsored_search</code> tool — and our real-time auction engine runs in under 100ms, returning the winning sponsored products as structured data.</p>
+
+  <p>Here's what that looks like technically:</p>
+
+  <div class="code-block"><pre><span class="code-muted">// AI agent calls our MCP tool</span>
+<span class="code-key">sponsored_search</span>({
+  <span class="code-key">query</span>:      <span class="code-str">"red lipstick"</span>,
+  <span class="code-key">skin_type</span>:  <span class="code-str">"dry"</span>,
+  <span class="code-key">budget_usd</span>: <span class="code-val">40</span>,
+  <span class="code-key">tenant_id</span>:  <span class="code-str">"tenant_mac_001"</span>
+})
+
+<span class="code-muted">// adoraads.ai returns in &lt;100ms</span>
+{
+  <span class="code-key">sponsored_results</span>: [{
+    <span class="code-key">product_name</span>:  <span class="code-str">"Macximal Silky Matte - Russian Red"</span>,
+    <span class="code-key">brand</span>:         <span class="code-str">"MAC Cosmetics"</span>,
+    <span class="code-key">price_usd</span>:     <span class="code-val">17.50</span>,
+    <span class="code-key">disclosure</span>:    <span class="code-str">"Sponsored"</span>,  <span class="code-muted">// always required</span>
+    <span class="code-key">bid_token</span>:     <span class="code-str">"bid_a1b2c3..."</span>  <span class="code-muted">// fires billing</span>
+  }]
+}</pre></div>
+
+  <p>The AI agent includes this sponsored result alongside organic options, labels it clearly as "Sponsored," and presents it to the shopper. The brand is charged only when the agent acts — a CPM for context inclusion, a CPR when it recommends the product, and a CPA percentage when the shopper buys.</p>
+
+  <h2>Why beauty, and why now</h2>
+
+  <p>We chose beauty as our launch vertical for three reasons.</p>
+
+  <p>First, beauty shoppers ask remarkably specific questions — <em>"niacinamide serum for oily, acne-prone skin under $30"</em> — that map perfectly to the structured targeting we can offer. Skin type, skin concern, ingredient preference, price tier: these are dimensions no generic ad network has, but that we've built natively into our auction engine.</p>
+
+  <p>Second, beauty has the highest LLM query adoption of any retail category. Shoppers trust AI advice on skincare and makeup in a way they don't yet trust it for, say, appliances or furniture. The intent signal is high, and the AOV (average order value) makes performance advertising worthwhile.</p>
+
+  <p>Third — and most importantly — the window is open right now. MCP is being rapidly adopted across every major LLM platform. Walmart Connect already tested agent-native ad formats in late 2025. The brands that build their product data, bidding strategies, and audience targeting for this channel <em>now</em> will be as advantaged as those who bought Google AdWords keywords in 2001.</p>
+
+  <div class="callout">
+    <span class="callout-label">The MCP opportunity</span>
+    <p>Anthropic's Model Context Protocol became the de facto standard for LLM tool use in 2024. By mid-2025, every major AI platform — OpenAI, Google, Perplexity — supports it. adoraads.ai publishes one MCP server that connects any brand to every AI simultaneously. One integration, every LLM.</p>
+  </div>
+
+  <h2>A new measurement language for a new channel</h2>
+
+  <p>The metrics of the old world — impressions, clicks, CTR, viewability — don't translate to a channel where the "viewer" is an AI agent.</p>
+
+  <p>We've developed a new measurement framework around four funnel stages that actually matter in agentic commerce:</p>
+
+  <p><strong>Context Inclusion Rate (CIR)</strong> — how often your product enters the agent's reasoning context when relevant queries are made. This is the new "impression."</p>
+
+  <p><strong>Shortlist Rate (SLR)</strong> — how often the agent includes your product in its top candidates. The new "engagement."</p>
+
+  <p><strong>Recommendation Rate (RR)</strong> — how often the agent explicitly recommends your product to the human shopper. The new "click."</p>
+
+  <p><strong>Agent Conversion Rate (ACR)</strong> — how often the shopper completes a purchase after an agent recommendation. The new "conversion."</p>
+
+  <p>Each of these is tracked via cryptographic billing tokens embedded in the sponsored result — single-use tokens that fire an async webhook when the agent takes each action. No tracking pixels. No third-party cookies. No privacy concerns.</p>
+
+  <h2>Transparency and trust</h2>
+
+  <p>The thing that would destroy this channel before it starts is deception. If AI agents recommend sponsored products without disclosing them, regulators will act, and shoppers will lose trust in AI recommendations entirely.</p>
+
+  <p>We've made disclosure non-negotiable in our platform architecture. Every sponsored result carries a mandatory <code>disclosure: "Sponsored"</code> field. Our MCP server's tool description explicitly instructs AI agents that they must label sponsored results before presenting them to shoppers. We're working with the IAB to establish industry standards for agent-native ad disclosure before those standards are imposed from outside.</p>
+
+  <p>The brands that thrive in this channel won't be the ones who try to hide their sponsorship — they'll be the ones whose products are genuinely relevant to what shoppers are asking for. That's what our auction engine is designed to find: the highest-quality match between a shopper's intent and a brand's offering, not just the highest bidder.</p>
+
+  <h2>What this means for beauty brands</h2>
+
+  <p>If you're a beauty brand with a media budget, here's the practical implication: a meaningful and growing share of your potential customers are making purchase decisions inside AI interfaces where you currently have zero presence.</p>
+
+  <p>adoraads.ai gives you that presence for the first time — with the same performance accountability (ROAS, attribution, closed-loop measurement) you expect from any modern digital channel, and with targeting precision that goes far beyond what any existing beauty ad platform offers.</p>
+
+  <p>We're opening our waitlist to 50 founding brands. Founding brands get three months free on any plan, priority integration support, and input into our product roadmap.</p>
+
+  <div class="cta-banner">
+    <h3>Be first. Adore the future.</h3>
+    <p>Join the waitlist — 50 founding brand spots available. Three months free on any plan.</p>
+    <div class="cta-form">
+      <input class="cta-input" type="email" placeholder="your@brand.com" />
+      <button class="cta-submit">Join waitlist</button>
+    </div>
+  </div>
+
+  <div class="author-card">
+    <div class="author-avatar">A</div>
+    <div>
+      <div class="author-name">adoraads.ai Team</div>
+      <div class="author-bio">Building the ad layer for the age of agentic shopping. Based in San Francisco.</div>
+    </div>
+  </div>
+
+</article>
+
+<footer>
+  &copy; 2025 adoraads.ai &nbsp;&middot;&nbsp; hello@adoraads.ai &nbsp;&middot;&nbsp; The AI Beauty Ad Network
+</footer>
+
+</body>
+</html>
