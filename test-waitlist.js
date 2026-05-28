@@ -22,7 +22,9 @@ async function test(name, fn) {
 }
 
 function assert(condition, message) {
-  if (!condition) throw new Error(message || "Assertion failed");
+  if (!condition) {
+    throw new Error(message || "Assertion failed");
+  }
 }
 
 async function run() {
@@ -130,12 +132,12 @@ async function run() {
   console.log(`\n${"─".repeat(40)}`);
   console.log(`  ${passed} passed  ${failed > 0 ? `· ${failed} failed` : ""}`);
   if (failed === 0) {
-    console.log(`\n  ✅  All tests passed — ready to deploy!\n`);
-    console.log(`  Deploy to Railway:\n`);
-    console.log(`    npm install -g @railway/cli`);
-    console.log(`    railway login`);
-    console.log(`    railway init`);
-    console.log(`    railway up\n`);
+    console.log("\n  ✅  All tests passed — ready to deploy!\n");
+    console.log("  Deploy to Railway:\n");
+    console.log("    npm install -g @railway/cli");
+    console.log("    railway login");
+    console.log("    railway init");
+    console.log("    railway up\n");
   } else {
     console.log(`\n  ⚠️   ${failed} test(s) failed — check server logs\n`);
     process.exit(1);

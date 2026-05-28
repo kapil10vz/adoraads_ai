@@ -69,7 +69,11 @@ try {
   const signups = [];
   db = {
     prepare: (sql) => ({
-      run: (...args) => { if (sql.includes("INSERT")) signups.push({ email: args[0], name: args[1], brand_name: args[2], brand_tier: args[3], source: args[4], created_at: new Date().toISOString() }); return { changes: 1 }; },
+      run: (...args) => {
+        if (sql.includes("INSERT")) {
+          signups.push({ email: args[0], name: args[1], brand_name: args[2], brand_tier: args[3], source: args[4], created_at: new Date().toISOString() });
+        } return { changes: 1 }; 
+      },
       get: (...args) => signups.find(s => s.email === args[0]),
       all: () => signups,
     }),
@@ -95,7 +99,9 @@ function isValidEmail(email) {
 // ── Slack notification (optional) ────────────────────────────────
 async function notifySlack(signup) {
   const webhookUrl = process.env.SLACK_WEBHOOK_URL;
-  if (!webhookUrl) return;
+  if (!webhookUrl) {
+    return;
+  }
   try {
     await fetch(webhookUrl, {
       method: "POST",
@@ -114,7 +120,9 @@ async function syncToMailchimp(email, name) {
   const apiKey   = process.env.MAILCHIMP_API_KEY;
   const listId   = process.env.MAILCHIMP_LIST_ID;
   const dc       = apiKey ? apiKey.split("-").pop() : null;
-  if (!apiKey || !listId) return;
+  if (!apiKey || !listId) {
+    return;
+  }
   try {
     const emailHash = crypto.createHash("md5").update(email.toLowerCase()).digest("hex");
     await fetch(`https://${dc}.api.mailchimp.com/3.0/lists/${listId}/members/${emailHash}`, {
@@ -136,10 +144,41 @@ async function syncToMailchimp(email, name) {
   }
 }
 
+// ── Loops.so sync (optional) ─────────────────────────────────────
+async function syncToLoops(email, name, brandName, brandTier) {
+  const apiKey = process.env.LOOPS_API_KEY;
+  if (!apiKey) {
+    return;
+  }
+  try {
+    await fetch("https://app.loops.so/api/v1/contacts/create", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        firstName: name || "",
+        customFields: {
+          brand_name: brandName || "",
+          brand_tier: brandTier || "indie",
+          waitlist_signup: true,
+        },
+      }),
+    });
+    console.log(`📧  Loops synced: ${email}`);
+  } catch (e) {
+    console.warn("Loops sync failed:", e.message);
+  }
+}
+
 // ── Welcome email via Resend (optional) ──────────────────────────
 async function sendWelcomeEmail(email, name) {
   const resendKey = process.env.RESEND_API_KEY;
-  if (!resendKey) return;
+  if (!resendKey) {
+    return;
+  }
   try {
     await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -184,7 +223,9 @@ async function sendWelcomeEmail(email, name) {
 function adminAuth(req, res, next) {
   const adminKey = process.env.ADMIN_KEY || "adoraads-admin-2025";
   const key = req.headers["x-admin-key"] || req.query.key;
-  if (key !== adminKey) return res.status(401).json({ error: "Unauthorized" });
+  if (key !== adminKey) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
   next();
 }
 
@@ -248,6 +289,7 @@ app.post("/waitlist", async (req, res) => {
   Promise.all([
     notifySlack(signup),
     syncToMailchimp(signup.email, name),
+    syncToLoops(signup.email, name, brand_name, brand_tier),
     sendWelcomeEmail(signup.email, name),
   ]).catch(e => console.error("Side-effect error:", e));
 
@@ -279,7 +321,9 @@ app.get("/waitlist/admin", adminAuth, (req, res) => {
     return acc;
   }, {});
   const byTier = signups.reduce((acc, s) => {
-    if (s.brand_tier) acc[s.brand_tier] = (acc[s.brand_tier] || 0) + 1;
+    if (s.brand_tier) {
+      acc[s.brand_tier] = (acc[s.brand_tier] || 0) + 1;
+    }
     return acc;
   }, {});
 
@@ -317,10 +361,10 @@ app.get("/health", (_, res) => {
 const PORT = process.env.PORT || 3010;
 app.listen(PORT, () => {
   console.log(`\n🌸 adoraads.ai waitlist server → http://localhost:${PORT}`);
-  console.log(`   POST /waitlist          — capture signups`);
-  console.log(`   GET  /waitlist/count    — public count`);
-  console.log(`   GET  /waitlist/admin    — admin view (X-Admin-Key header)`);
-  console.log(`   GET  /waitlist/admin/csv — export CSV`);
+  console.log("   POST /waitlist          — capture signups");
+  console.log("   GET  /waitlist/count    — public count");
+  console.log("   GET  /waitlist/admin    — admin view (X-Admin-Key header)");
+  console.log("   GET  /waitlist/admin/csv — export CSV");
   console.log(`\n   Admin key: ${process.env.ADMIN_KEY || "adoraads-admin-2025"}`);
-  console.log(`   Set SLACK_WEBHOOK_URL, MAILCHIMP_API_KEY, RESEND_API_KEY in .env\n`);
+  console.log("   Set SLACK_WEBHOOK_URL, MAILCHIMP_API_KEY, RESEND_API_KEY in .env\n");
 });
