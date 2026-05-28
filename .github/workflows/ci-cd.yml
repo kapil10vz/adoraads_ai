@@ -31,6 +31,24 @@ jobs:
       - name: Lint code
         run: npm run lint:check
 
+      - name: Start server for tests
+        run: npm start &
+        env:
+          NODE_ENV: test
+
+      - name: Wait for server to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:3010/health > /dev/null 2>&1; then
+              echo "Server is ready"
+              exit 0
+            fi
+            echo "Waiting for server... ($i/30)"
+            sleep 1
+          done
+          echo "Server failed to start"
+          exit 1
+
       - name: Run unit tests
         run: npm run test
 
