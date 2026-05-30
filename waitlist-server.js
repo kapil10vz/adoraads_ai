@@ -301,6 +301,66 @@ app.post("/waitlist", async (req, res) => {
 });
 
 /**
+ * POST /concepts
+ * Captures contact info from users interested in the POC demo
+ * Redirects to /poc.html on success
+ */
+app.post("/concepts", async (req, res) => {
+  const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+
+  // Rate limit: 10 requests per IP per minute
+  if (!rateLimit(ip, 10, 60000)) {
+    return res.status(429).json({ success: false, error: "Too many requests. Please slow down." });
+  }
+
+  const { email, brand_name } = req.body;
+
+  // Validate email
+  if (!email || !isValidEmail(email)) {
+    return res.status(400).json({ success: false, error: "Please enter a valid email address." });
+  }
+
+  // Insert into DB (allow duplicate emails for concepts, they're interested in the demo)
+  try {
+    db.prepare(`
+      INSERT INTO signups (email, brand_name, source, ip, user_agent)
+      VALUES (?, ?, ?, ?, ?)
+    `).run(
+      email.toLowerCase().trim(),
+      brand_name || null,
+      "poc_gate",
+      ip,
+      req.headers["user-agent"] || null,
+    );
+
+    // Log event
+    db.prepare("INSERT INTO events (email, event, metadata) VALUES (?, ?, ?)")
+      .run(email.toLowerCase().trim(), "poc_interest", JSON.stringify({ brand_name }));
+
+    console.log(`🎮 POC demo interest: ${email} | brand: ${brand_name || "—"}`);
+  } catch (e) {
+    // If duplicate, that's ok for poc_gate - they just want to see the demo again
+    if (!e.message.includes("UNIQUE")) {
+      console.error("DB insert failed:", e.message);
+      return res.status(500).json({ success: false, error: "Something went wrong. Please try again." });
+    }
+  }
+
+  // Fire side-effects async (non-blocking)
+  const signup = { email: email.toLowerCase().trim(), brand_name };
+  Promise.all([
+    notifySlack({ ...signup, event: "POC demo interest" }),
+    syncToLoops(signup.email, null, brand_name, null),
+  ]).catch(e => console.error("Side-effect error:", e));
+
+  return res.json({
+    success: true,
+    message: "Great! Loading the demo...",
+    redirect: "/poc.html",
+  });
+});
+
+/**
  * GET /waitlist/count
  * Public: returns total signup count (for social proof on landing page)
  */
