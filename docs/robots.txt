@@ -1,0 +1,13 @@
+# adoraads.ai robots.txt
+# Allow all search engines to crawl the site
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /*.db
+
+# Specify sitemap location
+Sitemap: https://adoraads.ai/sitemap.xml
+
+# Crawl delay (optional - be nice to servers)
+Crawl-delay: 1

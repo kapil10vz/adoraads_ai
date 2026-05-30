@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Beauty MCP Ad Network — Interactive POC</title>
+  <meta name="description" content="Live in-browser demo of a sponsored-product ad network for AI shopping assistants. Two MCP servers, one auction, one ledger." />
+  <link rel="stylesheet" href="poc.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">BEAUTY <span class="accent">MCP AD NETWORK</span></div>
+    <nav class="topnav">
+      <a href="README.md">README</a>
+      <a href="assets/Beauty_MCP_Ad_Network_Design.docx">Design doc</a>
+      <a href="assets/Beauty_MCP_Ad_Network_Pilot.pptx">Pitch deck</a>
+      <a href="index.html">Home</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-wrap">
+      <span class="eyebrow">PILOT · PROOF OF CONCEPT</span>
+      <h1>A two-sided sponsored-product network <span class="accent">for AI shopping assistants.</span></h1>
+      <p class="tagline">
+        Two MCP servers — one for shoppers, one for brands — share a catalogue, a transparent second-price auction,
+        and a closed-loop event ledger. Run the demo below: search the catalogue, see organic and sponsored slots
+        with disclosure, click through, check out, then switch to the brand console and watch ROAS update in real time.
+      </p>
+      <div class="pill-row">
+        <span class="pill">3 brands · 30 SKUs</span>
+        <span class="pill">Second-price auction (GSP)</span>
+        <span class="pill">Protocol-level disclosure</span>
+        <span class="pill">No backend — runs entirely in your browser</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+
+    <div class="panel">
+      <div class="tabs">
+        <button class="tab active" data-tab="shopper">Shopper view</button>
+        <button class="tab" data-tab="brand">Brand console</button>
+        <button class="tab" data-tab="about">How it works</button>
+      </div>
+
+      <!-- ============================================= SHOPPER ===== -->
+      <section id="panel-shopper" class="tab-panel active">
+
+        <div class="toolbar">
+          <div class="muted small">Search the catalogue as an AI shopping assistant would — both organic and sponsored results return on the same query.</div>
+          <div class="right">
+            <button class="btn ghost" id="reset-btn">Reset state</button>
+          </div>
+        </div>
+
+        <div class="search-row">
+          <input type="text" id="search-input" placeholder="e.g. brightening vitamin c serum" value="brightening vitamin c" />
+          <select id="category-select">
+            <option value="">All categories</option>
+            <option value="skincare">Skincare</option>
+            <option value="color_cosmetics">Color cosmetics</option>
+            <option value="fragrance">Fragrance</option>
+            <option value="haircare">Haircare</option>
+          </select>
+          <button class="btn primary" id="search-btn">Search</button>
+        </div>
+
+        <div class="presets">
+          <span class="muted small">Try: </span>
+          <button class="preset" data-q="brightening vitamin c" data-cat="skincare">brightening vitamin c</button>
+          <button class="preset" data-q="matte lipstick red" data-cat="color_cosmetics">matte lipstick red</button>
+          <button class="preset" data-q="clean beauty bakuchiol" data-cat="skincare">clean beauty bakuchiol</button>
+          <button class="preset" data-q="smoky eyeshadow palette" data-cat="color_cosmetics">smoky eyeshadow</button>
+          <button class="preset" data-q="hydration serum" data-cat="skincare">hydration serum</button>
+        </div>
+
+        <div class="shopper-grid">
+
+          <div>
+            <div class="section-head"><span class="count">★</span> Sponsored placements <span class="muted small">— labelled by protocol</span></div>
+            <div id="sponsored-results"></div>
+
+            <div class="section-head" style="margin-top: 22px;">Organic results</div>
+            <div id="organic-results"></div>
+          </div>
+
+          <div>
+            <div class="section-head">Cart</div>
+            <div id="cart"></div>
+          </div>
+
+        </div>
+
+        <div id="auction-explain"></div>
+
+      </section>
+
+      <!-- ============================================= BRAND ======= -->
+      <section id="panel-brand" class="tab-panel">
+        <div class="muted small" style="margin-bottom: 10px;">
+          What a brand-side agent sees: live performance per campaign, in-place bid edits,
+          and a non-destructive bid forecaster. Run a few shopper searches first to populate the ledger.
+        </div>
+
+        <div id="brand-campaigns" class="brand-grid"></div>
+
+        <div id="brand-forecast"></div>
+
+        <div class="section-head" style="margin-top: 22px;">Recent ledger events</div>
+        <div id="brand-ledger"></div>
+      </section>
+
+      <!-- ============================================= ABOUT ======= -->
+      <section id="panel-about" class="tab-panel">
+        <h2 style="font-size:22px;">How it works</h2>
+        <p>
+          The same logic that runs in the Python MCP servers (see
+          <code>mcp_servers/core.py</code> in the repo) has been ported to vanilla JS so this page works without a backend.
+          Every action you take in the shopper view writes to the same in-memory ledger that the brand view reads.
+        </p>
+        <h3 style="margin-top:14px; font-size:18px;">Auction</h3>
+        <p>
+          <strong>rank_score = bid_cpc × relevance.</strong>
+          Top-K wins by rank score. The winner's cleared CPC is
+          <em>(runner_up.rank_score / winner.relevance) + $0.01</em>, capped at the winner's bid —
+          the same generalized second-price (GSP) mechanic used by Google Search Ads and Amazon Sponsored Products.
+        </p>
+        <h3 style="margin-top:14px; font-size:18px;">Disclosure</h3>
+        <p>
+          Every sponsored payload carries <code>sponsored: true</code> and a human-readable
+          <em>"Sponsored — paid placement"</em> string. The shopper-side agent is contractually required to surface it verbatim.
+          You'll see it on every sponsored card above — it's emitted by the protocol, not the UI.
+        </p>
+        <h3 style="margin-top:14px; font-size:18px;">Privacy</h3>
+        <p>
+          No PII passes through the auction. Targeting is keyword and category only (contextual). Brand-side data is
+          scoped to the authenticated brand. The protocol intentionally has no hooks for behavioural targeting in v1.
+        </p>
+        <h3 style="margin-top:14px; font-size:18px;">Try this</h3>
+        <ol>
+          <li>Search <em>"brightening vitamin c"</em> — Luma Glow's LG-003 should win slot 1 over Aurora Botanica.</li>
+          <li>Add the top sponsored product to your cart, then check out. ROAS appears under the brand console.</li>
+          <li>Go to the brand console, raise Luma Glow's bid to $2.40, and run the forecast.</li>
+          <li>Search the same query again — note how the cleared CPC changes when the runner-up gets closer.</li>
+        </ol>
+        <p class="muted small">
+          Want the real, MCP-protocol server? It's in <code>mcp_servers/shopper_server.py</code> and <code>mcp_servers/brand_server.py</code>.
+          Install with <code>pip install "mcp[cli]"</code>, then run <code>python -m mcp_servers.shopper_server</code>.
+        </p>
+      </section>
+
+    </div>
+  </main>
+
+  <div class="footer">Beauty MCP Ad Network · POC v0.1 · For internal pilot review</div>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="poc.js"></script>
+</body>
+</html>
