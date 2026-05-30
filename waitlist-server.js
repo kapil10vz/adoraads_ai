@@ -408,6 +408,63 @@ app.get("/waitlist/admin/csv", adminAuth, (req, res) => {
 });
 
 /**
+ * GET /concepts/admin
+ * POC Demo analytics (password protected)
+ * Shows metrics specifically for demo gate interest (source: 'poc_gate')
+ */
+app.get("/concepts/admin", adminAuth, (req, res) => {
+  const pocEntries = db.prepare("SELECT id, email, brand_name, created_at FROM signups WHERE source = 'poc_gate' ORDER BY created_at DESC").all();
+
+  const total = pocEntries.length;
+
+  // Breakdown by brand name
+  const byBrand = pocEntries.reduce((acc, s) => {
+    const brand = s.brand_name || "Not specified";
+    acc[brand] = (acc[brand] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Breakdown by date (last 7 days)
+  const byDate = pocEntries.reduce((acc, s) => {
+    const date = s.created_at?.split("T")[0] || "unknown";
+    acc[date] = (acc[date] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Recent entries (last 20)
+  const recent = pocEntries.slice(0, 20);
+
+  // Today's count
+  const todayDate = new Date().toISOString().split("T")[0];
+  const todayCount = pocEntries.filter(s => s.created_at?.startsWith(todayDate)).length;
+
+  res.json({
+    total,
+    today: todayCount,
+    by_brand: byBrand,
+    by_date: byDate,
+    recent,
+  });
+});
+
+/**
+ * GET /concepts/admin/csv
+ * Export POC demo interest as CSV
+ */
+app.get("/concepts/admin/csv", adminAuth, (req, res) => {
+  const pocEntries = db.prepare("SELECT email, brand_name, created_at FROM signups WHERE source = 'poc_gate' ORDER BY created_at DESC").all();
+  const headers = ["email", "brand_name", "created_at"];
+  const csv = [
+    headers.join(","),
+    ...pocEntries.map(s => headers.map(h => JSON.stringify(s[h] || "")).join(",")),
+  ].join("\n");
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", "attachment; filename=adoraads-poc-demo.csv");
+  res.send(csv);
+});
+
+/**
  * GET /health
  */
 app.get("/health", (_, res) => {
@@ -425,6 +482,9 @@ app.listen(PORT, () => {
   console.log("   GET  /waitlist/count    — public count");
   console.log("   GET  /waitlist/admin    — admin view (X-Admin-Key header)");
   console.log("   GET  /waitlist/admin/csv — export CSV");
+  console.log("   POST /concepts          — POC demo interest capture");
+  console.log("   GET  /concepts/admin    — POC analytics (X-Admin-Key header)");
+  console.log("   GET  /concepts/admin/csv — POC export CSV");
   console.log(`\n   Admin key: ${process.env.ADMIN_KEY || "adoraads-admin-2025"}`);
   console.log("   Set SLACK_WEBHOOK_URL, MAILCHIMP_API_KEY, RESEND_API_KEY in .env\n");
 });
